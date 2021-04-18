@@ -1,7 +1,8 @@
-const Crawler = require("crawler");
-const opn = require("open");
-const excel = require("excel4node");
-const googleIt = require("google-it");
+const Crawler = require('crawler');
+const axios = require('axios');
+const opn = require('open');
+const excel = require('excel4node');
+const googleIt = require('google-it');
 
 let sheetNumber = 1;
 
@@ -16,59 +17,87 @@ const c = new Crawler({
 			const $ = res.$;
 			// $ is Cheerio by default
 			//a lean implementation of core jQuery designed specifically for the server
-			const links = $("td.wrap-line").children().toArray();
+			const links = $('td.wrap-line')
+				.children()
+				.toArray();
 			const pageLinks = links
 				.map((anchor, i) => {
 					const matchingHeader = anchor.children.filter(
-						(child) =>
+						child =>
 							child.data &&
-							!child.data.includes("\n") &&
-							child.data.toLowerCase().includes("transakc")
+							!child.data.includes('\n') &&
+							child.data.toLowerCase().includes('transakc')
 					);
 					if (matchingHeader.length > 0) {
 						return matchingHeader[0].parent.attribs.href;
 					}
 				})
-				.filter((anchor) => anchor !== undefined);
+				.filter(anchor => anchor !== undefined);
 			// const worksheet = workbook.addWorksheet(`Day ${sheetNumber}`);
 			const uniqueLinks = [...new Set(pageLinks)];
 			uniqueLinks.forEach((link, index) => {
 				if (index < 2) {
 					// opn(link);
 					const insideCrawler = new Crawler({
-						callback: (errorI, resI, doneI) => {
+						callback: async (errorI, resI, doneI) => {
 							if (errorI) {
 								console.log(errorI);
 							} else {
 								const $I = resI.$;
 								// Download PDF File
-								const pdfLink = $I("tr.dane>td>li>a").prop(
-									"href"
+								let pdfLink = $I('tr.dane>td>li>a').prop(
+									'href'
 								);
-								opn(
-									"http://infostrefa.com/espi/pl/reports/view/" +
-										pdfLink
-								);
+								pdfLink =
+									'http://infostrefa.com/espi/pl/reports/view/' +
+									pdfLink;
 								// Get company name
-								const companyName = $I(
-									"div.dane>table>tr>td>span.bold"
+								let companyName = $I(
+									'div.dane>table>tr>td>span.bold'
 								).toArray()[2].children[0].data;
-								console.log(companyName);
 								// Get date
 								const date = $I(
-									"div.dane>table>tr>td>span.bold"
+									'div.dane>table>tr>td>span.bold'
 								).toArray()[1].children[0].data;
-								console.log(date);
+
+								// Get NIP
+								const nip = $I('html').html();
+								if (nip) {
+									const re = /\d{3}\s\d{3}\s\d{2}\s\d{2}/gi;
+									if (!nip.match(re)) {
+										opn(link);
+									}
+									console.log(
+										nip.match(re)
+										// nip.match(re)[0].replace(/\s/g, '');
+									);
+								} else {
+									console.log('No NIP');
+								}
+								// console.log(nip);
+
+								// try {
+								// 	const googleResponse = await googleIt({
+								// 		query: `${companyName} infosfera`,
+								// 	});
+								// 	companyName = googleResponse[0].title.split(
+								// 		' - Infostrefa'
+								// 	)[0];
+								// 	console.log(companyName);
+								// 	const graphqlQuery = {
+								// 		query: `
+								//             mutation{postInsidersTransaction(data: {companyName: "${companyName}", date: "${date}"}) {result}}
+								//         `,
+								// 	};
+								// 	const response = await axios.post(
+								// 		'http://localhost:8080/graphql',
+								// 		graphqlQuery
+								// 	);
+								// 	console.log(response.data);
+								// } catch (err) {
+								// 	console.log(err.response.data);
+								// }
 								doneI();
-								// Find company in google
-								googleIt({ query: `${companyName} bankier` })
-									.then((results) => {
-										// access to results object here
-										opn(results[0].link);
-									})
-									.catch((e) => {
-										// any possible errors that might have occurred (like no Internet connection)
-									});
 							}
 						},
 					});
@@ -89,9 +118,9 @@ const c = new Crawler({
 
 const days = [];
 
-for (let a = 15; a <= 15; a++) {
+for (let a = 1; a <= 3; a++) {
 	days.push(
-		`http://infostrefa.com/infostrefa/pl/raporty/espi/biezace,2021,4,${a},2`
+		`http://infostrefa.com/infostrefa/pl/raporty/espi/biezace,2021,3,${a},1`
 	);
 }
 
