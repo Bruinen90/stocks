@@ -5,7 +5,7 @@ const Company = require('../../models/Company');
 const Crawler = require('crawler');
 
 module.exports = {
-	updateCompaniesData: async ({ date }, res) => {
+	updateCompaniesData: async ({ date }, req) => {
 		const findNumber = rowDiv => {
 			return parseFloat(
 				rowDiv.children[0].children[0].data.replace(',', '.')
@@ -128,14 +128,16 @@ module.exports = {
 			}
 		});
 	},
-	getCompanyData: async ({ companyName, date }, res) => {
-		const companyFound = await Company.findOne({ name: companyName });
+	getDailyData: async ({ data }, req) => {
+		console.log(data);
+		const { name, date } = data;
+		const companyFound = await Company.findOne({ name: name });
 		if (companyFound) {
-			console.log(
-				companyFound.data.find(data => {
-					return data.date.toString() === new Date(date).toString();
-				})
-			);
+			console.log('FOUND', companyFound);
+			const responseData = companyFound.data.find(data => {
+				return data.date.toString() === new Date(date).toString();
+			});
+			return responseData;
 		}
 	},
 };

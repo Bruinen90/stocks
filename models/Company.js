@@ -19,6 +19,17 @@ const CompanySchema = new Schema({
 		],
 		required: true,
 	},
+	insidersTransactions: {
+		type: [
+			{
+				transactionType: String,
+				date: Date,
+				volumen: Number,
+				closingPrice: Number,
+			},
+		],
+		required: false,
+	},
 });
 
 module.exports = mongoose.model('Company', CompanySchema);
