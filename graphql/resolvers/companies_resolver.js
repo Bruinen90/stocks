@@ -148,27 +148,30 @@ module.exports = {
 				try {
 					if (!company.nip) {
 						const googleResponse = await googleIt({
-							query: `${company.name} nip krs-pobierz`,
+							options: {
+								noDisplay: true,
+							},
+							query: `${company.name} nip`,
 						});
-						const regex = /NIP\s(\d*)\sKRS/;
-						const nip = googleResponse[0].title.match(regex);
-						console.log(nip[1]);
-						company.nip = parseInt(nip[1]);
-						await company.save();
+						const regex = /NIP\s(\d*),\s./;
+						const nip = googleResponse
+							.map(response => response.snippet)
+							.join(' ')
+							.match(regex);
+						if (nip && nip[1]) {
+							company.nip = parseInt(nip[1]);
+							await company.save();
+						} else {
+							console.log(
+								'NIP NOT FOUND for comapny ',
+								company.name
+							);
+						}
 					}
 				} catch (err) {
 					console.log(err);
 				}
 			});
-			// const company = await Company.findOne();
-			// const googleResponse = await googleIt({
-			// 	query: `${company.name} nip krs-pobierz`,
-			// });
-			// const regex = /NIP\s(\d*)\sKRS/;
-			// const nip = googleResponse[0].title.match(regex);
-			// console.log(nip[1]);
-			// company.nip = parseInt(nip[1]);
-			// await company.save();
 		} catch (err) {
 			console.log(err);
 		}
