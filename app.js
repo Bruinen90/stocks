@@ -49,6 +49,8 @@ app.use(
 // 	date: '2021-03-02',
 // });
 
+graphqlResolver.getInsidersTransactions();
+
 const spinnUp = async () => {
 	try {
 		await mongoose.connect(

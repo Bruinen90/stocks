@@ -28,9 +28,11 @@ module.exports = buildSchema(`
     }
 
     input InsidersTransactionInput {
-        companyName: String!
-        type: String
+        nip: String!
         date: String!
+        identifier: String!
+        pdfLink: String!
+        type: String
         volumen: Float
     }
 

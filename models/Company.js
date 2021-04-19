@@ -27,6 +27,8 @@ const CompanySchema = new Schema({
 				date: Date,
 				volumen: Number,
 				closingPrice: Number,
+				pdfLink: String,
+				identifier: { type: String, unique: true, dropDups: true },
 			},
 		],
 		required: false,

@@ -1,22 +1,15 @@
 const Crawler = require('crawler');
 const axios = require('axios');
 const opn = require('open');
-const excel = require('excel4node');
-const googleIt = require('google-it');
-
-let sheetNumber = 1;
 
 const c = new Crawler({
 	timeout: 999999,
 	maxConnections: 30,
 	callback: (error, res, done) => {
-		// const workbook = new excel.Workbook();
 		if (error) {
 			console.log(error);
 		} else {
 			const $ = res.$;
-			// $ is Cheerio by default
-			//a lean implementation of core jQuery designed specifically for the server
 			const links = $('td.wrap-line')
 				.children()
 				.toArray();
@@ -33,11 +26,9 @@ const c = new Crawler({
 					}
 				})
 				.filter(anchor => anchor !== undefined);
-			// const worksheet = workbook.addWorksheet(`Day ${sheetNumber}`);
 			const uniqueLinks = [...new Set(pageLinks)];
 			uniqueLinks.forEach((link, index) => {
 				if (index < 2) {
-					// opn(link);
 					const insideCrawler = new Crawler({
 						callback: async (errorI, resI, doneI) => {
 							if (errorI) {
@@ -61,65 +52,66 @@ const c = new Crawler({
 								).toArray()[1].children[0].data;
 
 								// Get NIP
-								const nip = $I('html').html();
-								if (nip) {
+								const html = $I('html').html();
+								let nip;
+								if (html) {
 									const regex = /<td>NIP<\/td>\s*<td>(.*)<\/td>/;
-									let foundNip = nip.match(regex)[1];
-									if (!foundNip) {
+									nip = html.match(regex)[1];
+									if (!nip) {
 										opn(link);
 									}
-									foundNip = foundNip.replace(/\D/g, '');
-									console.log(foundNip);
+									nip = nip.replace(/\D/g, '');
+									console.log('NIP: ', nip);
 								} else {
-									console.log('No NIP');
+									console.log('No NIP for ', link);
+									opn(link);
 								}
-								// console.log(nip);
 
-								// try {
-								// 	const googleResponse = await googleIt({
-								// 		query: `${companyName} infosfera`,
-								// 	});
-								// 	companyName = googleResponse[0].title.split(
-								// 		' - Infostrefa'
-								// 	)[0];
-								// 	console.log(companyName);
-								// 	const graphqlQuery = {
-								// 		query: `
-								//             mutation{postInsidersTransaction(data: {companyName: "${companyName}", date: "${date}"}) {result}}
-								//         `,
-								// 	};
-								// 	const response = await axios.post(
-								// 		'http://localhost:8080/graphql',
-								// 		graphqlQuery
-								// 	);
-								// 	console.log(response.data);
-								// } catch (err) {
-								// 	console.log(err.response.data);
-								// }
+								// Get transaction identifier
+								let identifier;
+								if (html) {
+									const regex = /<td>Identyfikator raportu<\/td>\s*<td>(.*)<\/td>/;
+									identifier = html.match(regex)[1];
+									if (!identifier) {
+										console.log(
+											'No transaction identifier for ',
+											link
+										);
+										opn(link);
+									}
+									// console.log('IDENTIFIER: ', identifier);
+								}
+								console.log(pdfLink);
+								try {
+									const graphqlQuery = {
+										query: `
+								            mutation{postInsidersTransaction(data: {nip: "${nip}", date: "${date}", identifier: "${identifier}", pdfLink: "${pdfLink}"}) {result}}
+								        `,
+									};
+									const response = await axios.post(
+										'http://localhost:8080/graphql',
+										graphqlQuery
+									);
+								} catch (err) {
+									console.log(err);
+								}
 								doneI();
 							}
 						},
 					});
 					insideCrawler.queue(link);
 				}
-				// worksheet.cell(index + 1, 1).string(link);
 			});
-			// workbook.write(`dane${sheetNumber}.xlsx`);
-
-			// links.forEach((link) => opn(link));
 		}
-		done = () => {
-			sheetNumber = sheetNumber + 1;
-		};
 		done();
 	},
 });
 
 const days = [];
 
-for (let a = 1; a <= 1; a++) {
+for (let a = 5; a <= 15; a++) {
 	days.push(
-		`http://infostrefa.com/infostrefa/pl/raporty/espi/biezace,2021,3,${a},1`
+		`http://infostrefa.com/infostrefa/pl/raporty/espi/biezace,2021,3,${a},3`
 	);
 }
 
