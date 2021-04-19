@@ -3,6 +3,7 @@ const Schema = mongoose.Schema;
 
 const CompanySchema = new Schema({
 	name: { type: String, required: true },
+	nip: Number,
 	data: {
 		type: [
 			{

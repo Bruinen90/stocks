@@ -63,14 +63,13 @@ const c = new Crawler({
 								// Get NIP
 								const nip = $I('html').html();
 								if (nip) {
-									const re = /\d{3}\s\d{3}\s\d{2}\s\d{2}/gi;
-									if (!nip.match(re)) {
+									const regex = /<td>NIP<\/td>\s*<td>(.*)<\/td>/;
+									let foundNip = nip.match(regex)[1];
+									if (!foundNip) {
 										opn(link);
 									}
-									console.log(
-										nip.match(re)
-										// nip.match(re)[0].replace(/\s/g, '');
-									);
+									foundNip = foundNip.replace(/\D/g, '');
+									console.log(foundNip);
 								} else {
 									console.log('No NIP');
 								}
@@ -118,7 +117,7 @@ const c = new Crawler({
 
 const days = [];
 
-for (let a = 1; a <= 3; a++) {
+for (let a = 1; a <= 1; a++) {
 	days.push(
 		`http://infostrefa.com/infostrefa/pl/raporty/espi/biezace,2021,3,${a},1`
 	);

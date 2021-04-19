@@ -42,7 +42,7 @@ app.use(
 // 	graphqlResolver.updateCompaniesData({ date: `2021-02-${day}` });
 // }
 
-// graphqlResolver.updateCompaniesData({ date: '2021-03-01' });
+graphqlResolver.addCompaniesNipNumbers();
 
 // graphqlResolver.getCompanyData({
 // 	companyName: '11 bit studios SA',

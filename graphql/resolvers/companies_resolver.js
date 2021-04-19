@@ -3,6 +3,7 @@ const Company = require('../../models/Company');
 
 // Crawler
 const Crawler = require('crawler');
+const googleIt = require('google-it');
 
 module.exports = {
 	updateCompaniesData: async ({ date }, req) => {
@@ -138,6 +139,38 @@ module.exports = {
 				return data.date.toString() === new Date(date).toString();
 			});
 			return responseData;
+		}
+	},
+	addCompaniesNipNumbers: async (_, req) => {
+		try {
+			const allCompanies = await Company.find();
+			allCompanies.forEach(async company => {
+				try {
+					if (!company.nip) {
+						const googleResponse = await googleIt({
+							query: `${company.name} nip krs-pobierz`,
+						});
+						const regex = /NIP\s(\d*)\sKRS/;
+						const nip = googleResponse[0].title.match(regex);
+						console.log(nip[1]);
+						company.nip = parseInt(nip[1]);
+						await company.save();
+					}
+				} catch (err) {
+					console.log(err);
+				}
+			});
+			// const company = await Company.findOne();
+			// const googleResponse = await googleIt({
+			// 	query: `${company.name} nip krs-pobierz`,
+			// });
+			// const regex = /NIP\s(\d*)\sKRS/;
+			// const nip = googleResponse[0].title.match(regex);
+			// console.log(nip[1]);
+			// company.nip = parseInt(nip[1]);
+			// await company.save();
+		} catch (err) {
+			console.log(err);
 		}
 	},
 };
