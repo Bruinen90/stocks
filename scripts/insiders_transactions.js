@@ -39,9 +39,13 @@ const c = new Crawler({
 								let pdfLink = $I('tr.dane>td>li>a').prop(
 									'href'
 								);
-								pdfLink =
-									'http://infostrefa.com/espi/pl/reports/view/' +
-									pdfLink;
+								if (!pdfLink) {
+									pdfLink = link;
+								} else {
+									pdfLink =
+										'http://infostrefa.com/espi/pl/reports/view/' +
+										pdfLink;
+								}
 								// Get company name
 								let companyName = $I(
 									'div.dane>table>tr>td>span.bold'
@@ -92,6 +96,7 @@ const c = new Crawler({
 										'http://localhost:8080/graphql',
 										graphqlQuery
 									);
+									console.log(response.data);
 								} catch (err) {
 									console.log(err);
 								}
@@ -109,7 +114,7 @@ const c = new Crawler({
 
 const days = [];
 
-for (let a = 5; a <= 15; a++) {
+for (let a = 1; a <= 3; a++) {
 	days.push(
 		`http://infostrefa.com/infostrefa/pl/raporty/espi/biezace,2021,3,${a},3`
 	);
