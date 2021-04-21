@@ -34,12 +34,12 @@ app.use(
 	})
 );
 
-// for (let i = 1; i <= 28; i++) {
+// for (let i = 1; i <= 30; i++) {
 // 	let day = i;
 // 	if (day < 10) {
 // 		day = '0' + day;
 // 	}
-// 	graphqlResolver.updateCompaniesData({ date: `2021-02-${day}` });
+// 	graphqlResolver.updateCompaniesData({ date: `2019-04-${day}` });
 // }
 
 // graphqlResolver.addCompaniesNipNumbers();
@@ -49,7 +49,7 @@ app.use(
 // 	date: '2021-03-02',
 // });
 
-graphqlResolver.getInsidersTransactions();
+// graphqlResolver.addCompaniesNipNumbers();
 
 const spinnUp = async () => {
 	try {

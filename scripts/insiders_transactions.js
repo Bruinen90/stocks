@@ -3,8 +3,8 @@ const axios = require('axios');
 const opn = require('open');
 
 const c = new Crawler({
+	rateLimit: 3000,
 	timeout: 999999,
-	maxConnections: 30,
 	callback: (error, res, done) => {
 		if (error) {
 			console.log(error);
@@ -114,10 +114,12 @@ const c = new Crawler({
 
 const days = [];
 
-for (let a = 1; a <= 3; a++) {
-	days.push(
-		`http://infostrefa.com/infostrefa/pl/raporty/espi/biezace,2021,3,${a},3`
-	);
+for (let a = 1; a <= 10; a++) {
+	for (let b = 1; b <= 4; b++) {
+		days.push(
+			`http://infostrefa.com/infostrefa/pl/raporty/espi/biezace,2019,1,${a},${b}`
+		);
+	}
 }
 
 c.queue(days);

@@ -15,8 +15,7 @@ module.exports = {
 
 		let data;
 		const eodCrawler = new Crawler({
-			timeout: 999999,
-			maxConnections: 30,
+			rateLimit: 10,
 			callback: (err, res, done) => {
 				if (err) {
 					console.log(err);
@@ -77,7 +76,7 @@ module.exports = {
 		eodCrawler.queue(
 			`https://www.money.pl/gielda/spolki-gpw/?date=${date}`
 		);
-		eodCrawler.on('drain', () => {
+		eodCrawler.on('drain', async () => {
 			try {
 				data.forEach(async company => {
 					const {

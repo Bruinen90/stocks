@@ -19,6 +19,15 @@ module.exports = {
 				volumen,
 			};
 
+			const duplicate = await InsiderTransaction.findOne({
+				identifier: identifier,
+				pdfLink: pdfLink,
+			});
+			if (duplicate) {
+				console.log('Transaction already in DB, adding aborted');
+				return { result: false };
+			}
+
 			const newInsiderTransaction = new InsiderTransaction(
 				newTransactionData
 			);
@@ -27,32 +36,7 @@ module.exports = {
 				'Properly saved transaction',
 				newInsiderTransaction._id
 			);
-			// if (
-			// 	!foundCompany.insidersTransactions ||
-			// 	!foundCompany.insidersTransactions.length > 0
-			// ) {
-			// 	foundCompany.insidersTransactions = [];
-			// }
 
-			// const updatedTransaction = await Company.findOneAndUpdate(
-			// 	{
-			// 		nip: nip,
-			// 		'insidersTransactions.identifier': identifier,
-			// 	},
-			// 	{
-			// 		$set: {
-			// 			'insidersTransactions.$.date': date,
-			// 			'insidersTransactions.$.pdfLink': pdfLink,
-			// 			'insidersTransactions.$.type': type,
-			// 			'insidersTransactions.$.volumen': volumen,
-			// 		},
-			// 	}
-			// );
-			// if (!updatedTransaction) {
-			// 	foundCompany.insidersTransactions.push(newTransactionData);
-			// 	const newRecord = await foundCompany.save();
-			// 	console.log(newRecord.insidersTransactions);
-			// }
 			return { result: true };
 		} else {
 			console.log('NO COMPANY FOUND FOR NIP: ', nip);
