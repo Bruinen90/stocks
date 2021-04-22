@@ -5,23 +5,27 @@ const addMonths = ({ date, monthsCount }) =>
 
 const analizeEffects = async ({ companyId, baseDate }) => {
 	const date = new Date(baseDate);
-	const baseDateData = await Company.find({
-		_id: companyId,
-		data: { date: date },
-	});
-	if (!baseDateData) {
-		console.log(
-			'No company found for data: ',
-			companyId,
-			new Date(baseDate)
-		);
-	} else {
-		const plusOneMonthData = await Company.find({
-			_id: companyId,
-			data: { date: addMonths({ monthsCount: 1, date }) },
-		});
-		console.log(plusOneMonthData);
+
+	try {
+		const company = await Company.findById(companyId);
+		console.log(company);
+	} catch (err) {
+		console.log(err);
 	}
+
+	// if (!baseDateData) {
+	// 	console.log(
+	// 		'No company found for data: ',
+	// 		companyId,
+	// 		new Date(baseDate)
+	// 	);
+	// } else {
+	// 	const plusOneMonthData = await Company.findOne({
+	// 		_id: companyId,
+	// 		data: { date: addMonths({ monthsCount: 1, date }) },
+	// 	});
+	// 	console.log(plusOneMonthData);
+	// }
 };
 
 analizeEffects({

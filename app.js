@@ -49,7 +49,10 @@ app.use(
 // 	date: '2021-03-02',
 // });
 
-// graphqlResolver.addCompaniesNipNumbers();
+graphqlResolver.analizeEffects({
+	companyId: '607b0923fdd08c3d685ecd10',
+	baseDate: '2019-01-03',
+});
 
 const spinnUp = async () => {
 	try {
