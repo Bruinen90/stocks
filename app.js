@@ -34,13 +34,13 @@ app.use(
 	})
 );
 
-// for (let i = 21; i <= 31; i++) {
-// 	let day = i;
-// 	if (day < 10) {
-// 		day = '0' + day;
-// 	}
-// 	graphqlResolver.updateCompaniesData({ date: `2019-05-${day}` });
-// }
+for (let i = 26; i <= 31; i++) {
+	let day = i;
+	if (day < 10) {
+		day = '0' + day;
+	}
+	graphqlResolver.updateCompaniesData({ date: `2019-10-${day}` });
+}
 
 // graphqlResolver.addCompaniesNipNumbers();
 

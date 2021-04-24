@@ -72,11 +72,10 @@ module.exports = {
 			console.log(err);
 		}
 	},
-	setTransactionType: async (_, req) => {
+	setTransactionType: async ({ data }, req) => {
 		try {
-			console.log(req);
-			const { transactionId, type } = req.data;
-			if (type === 'toBeRemoved') {
+			const { transactionId, type } = data;
+			if (type === 'other') {
 				await InsiderTransaction.findOneAndRemove({
 					_id: transactionId,
 				});

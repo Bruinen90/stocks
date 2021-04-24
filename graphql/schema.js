@@ -24,6 +24,7 @@ module.exports = buildSchema(`
         date: String!
         volumen: Float
         pdfLink: String!
+        analizeResults: AnalizeResults
     }
 
     type InsidersTransactions {
@@ -32,6 +33,17 @@ module.exports = buildSchema(`
 
     type SuccessResult {
         result: Boolean!
+    }
+
+    type AnalizeResult {
+        endChange: Float,
+        max: Float,
+        min: Float,
+    }
+
+    type AnalizeResults {
+        oneMonth: AnalizeResult
+        threeMonths: AnalizeResult
     }
 
     input CompanyDataInput {

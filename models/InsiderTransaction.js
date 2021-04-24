@@ -5,7 +5,7 @@ const AnalizeResultsSchema = require('./AnalizeResults');
 
 const InsiderTransactionSchema = new Schema({
 	company: { type: Schema.Types.ObjectId, ref: 'Company' },
-	transactionType: String,
+	type: String,
 	date: Date,
 	volumen: Number,
 	pdfLink: String,
