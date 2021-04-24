@@ -5,6 +5,8 @@ const InsiderTransaction = require('../../models/InsiderTransaction');
 // Crawler
 const Crawler = require('crawler');
 
+const { analizeEffects } = require('./analize');
+
 module.exports = {
 	postInsidersTransaction: async ({ data }, req) => {
 		const { nip, type, date, identifier, pdfLink, volumen } = data;
@@ -44,9 +46,56 @@ module.exports = {
 		}
 	},
 	getInsidersTransactions: async (_, req) => {
-		const companiesWithInsidersTransactions = await InsiderTransaction.find().populate(
-			'company'
-		);
-		console.log(companiesWithInsidersTransactions);
+		try {
+			const companiesWithInsidersTransactions = await InsiderTransaction.find().populate(
+				'company'
+			);
+			return { transactions: companiesWithInsidersTransactions };
+		} catch (err) {
+			console.log(err);
+		}
+	},
+	analizeTransactions: async (_, req) => {
+		try {
+			const allTransactions = await InsiderTransaction.find();
+			allTransactions
+				.filter(transaction => !transaction.analizeResults)
+				.forEach(async transaction => {
+					const analizeEffect = await analizeEffects({
+						companyId: transaction.company,
+						baseDate: transaction.date,
+					});
+					transaction.analizeResults = { ...analizeEffect };
+					await transaction.save();
+				});
+		} catch (err) {
+			console.log(err);
+		}
+	},
+	setTransactionType: async (_, req) => {
+		try {
+			console.log(req);
+			const { transactionId, type } = req.data;
+			if (type === 'toBeRemoved') {
+				await InsiderTransaction.findOneAndRemove({
+					_id: transactionId,
+				});
+				return { result: true };
+			} else {
+				const transaction = await InsiderTransaction.findById(
+					transactionId
+				);
+				if (!transaction) {
+					console.log('No transaction found for ID: ', transactionId);
+					return { result: false };
+				} else {
+					transaction.type = type;
+					await transaction.save();
+					return { result: true };
+				}
+			}
+		} catch (err) {
+			console.log(err);
+		}
 	},
 };

@@ -9,8 +9,6 @@ const findNumber = rowDiv => {
 const getDailyData = (date = RECIEVED_DATE) => {
 	let data;
 	const eodCrawler = new Crawler({
-		timeout: 999999,
-		maxConnections: 30,
 		callback: (err, res, done) => {
 			if (err) {
 				console.log(err);
@@ -65,6 +63,10 @@ const getDailyData = (date = RECIEVED_DATE) => {
 	});
 
 	eodCrawler.queue(`https://www.money.pl/gielda/spolki-gpw/?date=${date}`);
+	console.log('Partly done');
+	eodCrawler.on('drain', () => {
+		console.log('UPDATING DAILY DATA DONE');
+	});
 	return eodCrawler;
 };
 

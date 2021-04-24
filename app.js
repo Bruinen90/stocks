@@ -34,12 +34,12 @@ app.use(
 	})
 );
 
-// for (let i = 1; i <= 30; i++) {
+// for (let i = 21; i <= 31; i++) {
 // 	let day = i;
 // 	if (day < 10) {
 // 		day = '0' + day;
 // 	}
-// 	graphqlResolver.updateCompaniesData({ date: `2019-04-${day}` });
+// 	graphqlResolver.updateCompaniesData({ date: `2019-05-${day}` });
 // }
 
 // graphqlResolver.addCompaniesNipNumbers();
@@ -49,10 +49,7 @@ app.use(
 // 	date: '2021-03-02',
 // });
 
-graphqlResolver.analizeEffects({
-	companyId: '607b0923fdd08c3d685ecd10',
-	baseDate: '2019-01-03',
-});
+// graphqlResolver.analizeTransactions();
 
 const spinnUp = async () => {
 	try {

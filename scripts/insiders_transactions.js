@@ -114,10 +114,10 @@ const c = new Crawler({
 
 const days = [];
 
-for (let a = 1; a <= 10; a++) {
+for (let a = 1; a <= 28; a++) {
 	for (let b = 1; b <= 4; b++) {
 		days.push(
-			`http://infostrefa.com/infostrefa/pl/raporty/espi/biezace,2019,1,${a},${b}`
+			`http://infostrefa.com/infostrefa/pl/raporty/espi/biezace,2019,2,${a},${b}`
 		);
 	}
 }

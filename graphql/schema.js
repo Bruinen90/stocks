@@ -11,11 +11,23 @@ module.exports = buildSchema(`
 		updateDate: String
     }
 
+    type Company {
+        name: String
+	    nip: Int
+        data: [DailyCompanyData]
+    }
+
     type InsidersTransaction {
+        _id: ID!
+        company: Company
         type: String
         date: String!
         volumen: Float
-        closingPrice: Float
+        pdfLink: String!
+    }
+
+    type InsidersTransactions {
+        transactions: [InsidersTransaction]
     }
 
     type SuccessResult {
@@ -36,12 +48,19 @@ module.exports = buildSchema(`
         volumen: Float
     }
 
+    input TransactionTypeInput {
+        transactionId: ID!
+        type: String!
+    }
+
     type RootMutation {
         postInsidersTransaction(data: InsidersTransactionInput): SuccessResult
+        setTransactionType(data: TransactionTypeInput): SuccessResult
     }
 
     type RootQuery {
         getDailyData(data: CompanyDataInput): DailyCompanyData
+        getInsidersTransactions: InsidersTransactions
     }
 
     schema {
